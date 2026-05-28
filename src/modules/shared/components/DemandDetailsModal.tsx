@@ -44,8 +44,8 @@ export default function DemandDetailsModal({ isOpen, onClose, demand, currentUse
             .select('*, author:profiles!author_id(full_name, avatar_url)')
             .eq('demand_id', demand.id)
             .order('created_at', { ascending: true })
-            .then((res) => {
-                setComments((res.data as DemandComment[]) || []);
+            .then((res: { data: DemandComment[] | null }) => {
+                setComments(res.data || []);
                 setLoadingComments(false);
             });
 
@@ -63,7 +63,7 @@ export default function DemandDetailsModal({ isOpen, onClose, demand, currentUse
                     .select('*, author:profiles!author_id(full_name, avatar_url)')
                     .eq('demand_id', demand.id)
                     .order('created_at', { ascending: true })
-                    .then((res) => setComments((res.data as DemandComment[]) || []));
+                    .then((res: { data: DemandComment[] | null }) => setComments(res.data || []));
             })
             .subscribe();
 
