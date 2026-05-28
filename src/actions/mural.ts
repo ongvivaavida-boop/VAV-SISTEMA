@@ -30,10 +30,20 @@ export async function getMuralPosts(): Promise<MuralPost[]> {
     return (data || []) as MuralPost[];
 }
 
+const LEADERSHIP_ROLES = ['Presidência', 'Direção', 'Coordenadora ADM', 'Coordenação de Pedagogia'];
+
+async function assertLeadership(supabase: any, userId: string) {
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', userId).single();
+    if (!profile || !LEADERSHIP_ROLES.includes(profile.role)) {
+        throw new Error('Sem permissão para gerenciar o mural.');
+    }
+}
+
 export async function createMuralPost(title: string, content: string, category: string, pinned: boolean) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Usuário não autenticado.');
+    await assertLeadership(supabase, user.id);
 
     const { error } = await supabase
         .from('mural_posts')
@@ -45,6 +55,10 @@ export async function createMuralPost(title: string, content: string, category: 
 
 export async function deleteMuralPost(id: string) {
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Usuário não autenticado.');
+    await assertLeadership(supabase, user.id);
+
     const { error } = await supabase
         .from('mural_posts')
         .delete()
@@ -56,6 +70,10 @@ export async function deleteMuralPost(id: string) {
 
 export async function toggleMuralPin(id: string, pinned: boolean) {
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Usuário não autenticado.');
+    await assertLeadership(supabase, user.id);
+
     const { error } = await supabase
         .from('mural_posts')
         .update({ pinned: !pinned })

@@ -18,7 +18,7 @@ export async function updateProfileNameAction(newName: string) {
 
         const { error: updateError } = await supabase
             .from('profiles')
-            .update({ full_name: newName.trim(), name: newName.trim() })
+            .update({ full_name: newName.trim() })
             .eq('id', user.id);
 
         if (updateError) {
