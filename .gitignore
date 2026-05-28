@@ -50,3 +50,8 @@ audit_encoding.mjs
 audit_data.mjs
 check_realtime.mjs
 enable_realtime.mjs
+test_rls.mjs
+probe_schema.mjs
+test_drive.mjs
+qroot.mjs
+qtok.mjs

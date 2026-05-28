@@ -14,8 +14,8 @@ export default async function DrivePage() {
         );
     }
 
-    const { rootId } = initialSync.data;
-
+    // Começa na raiz do Drive ("Meu Drive") para exibir todas as pastas.
+    // O sync acima garante que a estrutura VAV SISTEMA > COMUNICAÇÃO já existe.
     return (
         <div className="w-full h-full min-h-[600px] flex flex-col bg-white dark:bg-black rounded-xl shadow-sm border border-slate-200 dark:border-white/10 overflow-hidden">
             <Suspense fallback={
@@ -23,7 +23,7 @@ export default async function DrivePage() {
                     <Loader2 className="w-8 h-8 animate-spin text-primary" />
                 </div>
             }>
-                <DriveExplorer initialFolderId={rootId} initialFolderName="VAV SISTEMA" />
+                <DriveExplorer initialFolderId="root" initialFolderName="Meu Drive" />
             </Suspense>
         </div>
     );
