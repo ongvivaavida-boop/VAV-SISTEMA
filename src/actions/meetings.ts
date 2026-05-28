@@ -140,8 +140,14 @@ export async function deleteMeetingAction(meetingId: string) {
             throw new Error('Usuário não autenticado.');
         }
 
-        // 2. Apagar no Supabase
-        // A política RLS deve garantir que ele só apaga reuniões que ele criou ou se for admin
+        // 2. Verificar permissão de role
+        const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+        const allowedRoles = ['Presidência', 'Direção', 'Coordenadora ADM', 'Coordenação de Pedagogia']
+        if (!profile || !allowedRoles.includes(profile.role)) {
+            throw new Error('Sem permissão para excluir reuniões.')
+        }
+
+        // 3. Apagar no Supabase
         const { error: deleteError } = await supabase
             .from('meetings')
             .delete()

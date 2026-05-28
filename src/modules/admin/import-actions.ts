@@ -89,6 +89,12 @@ export async function saveImportedTransactions(bankId: string, transactions: Par
 
     if (!user) return { success: false, error: 'Usuário não autenticado.' }
 
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+    const allowedRoles = ['Coordenadora ADM', 'Presidência', 'Direção', 'Estagiário(a) de ADM']
+    if (!profile || !allowedRoles.includes(profile.role)) {
+        return { success: false, error: 'Permissão negada.' }
+    }
+
     try {
         const entries = transactions.map(t => ({
             bank_id: bankId,

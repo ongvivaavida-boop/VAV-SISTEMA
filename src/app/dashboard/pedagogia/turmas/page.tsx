@@ -156,7 +156,7 @@ export default function TurmasPage() {
                                     : 'hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-transparent'
                                     }`}>
                                 <p className="font-bold">{cls.name}</p>
-                                <p className="text-[10px] text-zinc-400 mt-0.5">{cls.year_group} Â· {cls.shift}</p>
+                                <p className="text-[10px] text-zinc-400 mt-0.5">{cls.year_group} · {cls.shift}</p>
                             </button>
                         ))
                     )}
@@ -176,7 +176,7 @@ export default function TurmasPage() {
                         <div className="shrink-0 flex items-center justify-between mb-5">
                             <div>
                                 <h2 className="text-2xl font-extrabold text-zinc-900 dark:text-white">{selectedClass.name}</h2>
-                                <p className="text-xs text-zinc-500">{selectedClass.year_group} Â· {selectedClass.shift} Â· {members.length} aluno(s)</p>
+                                <p className="text-xs text-zinc-500">{selectedClass.year_group} · {selectedClass.shift} · {members.length} aluno(s)</p>
                             </div>
                             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                                 onClick={() => setShowStudentModal(true)}
