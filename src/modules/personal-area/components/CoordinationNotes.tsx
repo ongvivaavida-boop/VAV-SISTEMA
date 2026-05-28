@@ -5,12 +5,15 @@ import { motion } from 'framer-motion';
 import { CoordinationNote } from '../types/v2';
 import { getUserNotes } from '../actions/notes';
 import { BorealSkeleton } from '@/components/ui/BorealSkeleton';
+import { createClient } from '@/lib/supabase';
 
 export function CoordinationNotes() {
     const [notes, setNotes] = useState<CoordinationNote[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        const supabase = createClient();
+
         const fetchNotes = async () => {
             const res = await getUserNotes();
             if (res.success && res.data) {
@@ -19,6 +22,20 @@ export function CoordinationNotes() {
             setIsLoading(false);
         };
         fetchNotes();
+
+        // Atualização em tempo real: recarrega ao detectar mudança nas notas
+        const channel = supabase
+            .channel('coordination-notes-realtime')
+            .on('postgres_changes', {
+                event: '*',
+                schema: 'public',
+                table: 'coordination_notes',
+            }, () => {
+                fetchNotes();
+            })
+            .subscribe();
+
+        return () => { supabase.removeChannel(channel); };
     }, []);
 
     return (

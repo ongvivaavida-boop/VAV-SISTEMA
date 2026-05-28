@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MuralPost, createMuralPost, deleteMuralPost, toggleMuralPin } from '@/actions/mural';
+import { MuralPost, createMuralPost, deleteMuralPost, toggleMuralPin, getMuralPosts } from '@/actions/mural';
+import { createClient } from '@/lib/supabase';
 
 const CATEGORIES = [
     { value: 'geral', label: 'Geral', color: 'bg-zinc-500/15 text-zinc-400 border-zinc-500/20' },
@@ -52,6 +53,23 @@ export default function MuralClient({ initialPosts, canPost, currentUserId, isLe
     const [pinned, setPinned] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
+    useEffect(() => {
+        const supabase = createClient();
+        const channel = supabase
+            .channel('mural-posts-realtime')
+            .on('postgres_changes', {
+                event: '*',
+                schema: 'public',
+                table: 'mural_posts',
+            }, async () => {
+                const fresh = await getMuralPosts();
+                setPosts(fresh);
+            })
+            .subscribe();
+
+        return () => { supabase.removeChannel(channel); };
+    }, []);
+
     const filtered = filterCat === 'todos'
         ? posts
         : posts.filter(p => p.category === filterCat);
@@ -61,11 +79,17 @@ export default function MuralClient({ initialPosts, canPost, currentUserId, isLe
         setSubmitting(true);
         try {
             await createMuralPost(title.trim(), content.trim(), category, pinned);
-            // Optimistic: reload via revalidation handled server-side
-            // For instant UI, we'll re-fetch posts by refreshing
-            window.location.reload();
+            // A subscription realtime atualiza a lista; limpa o formulário
+            const fresh = await getMuralPosts();
+            setPosts(fresh);
+            setTitle('');
+            setContent('');
+            setCategory('geral');
+            setPinned(false);
+            setShowForm(false);
         } catch (e) {
             console.error(e);
+        } finally {
             setSubmitting(false);
         }
     };

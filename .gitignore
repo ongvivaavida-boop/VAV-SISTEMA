@@ -42,3 +42,11 @@ next-env.d.ts
 
 # Scripts utilitários com possíveis segredos
 run_migrations.mjs
+fix_encoding_roles.mjs
+check_corrupt.mjs
+fix_wl.mjs
+*.local.mjs
+audit_encoding.mjs
+audit_data.mjs
+check_realtime.mjs
+enable_realtime.mjs
