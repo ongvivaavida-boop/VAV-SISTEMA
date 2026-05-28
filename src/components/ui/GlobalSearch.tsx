@@ -72,7 +72,7 @@ export default function GlobalSearch() {
             supabase.from('demands').select('id, title, status').ilike('title', term).limit(5),
             supabase.from('meetings').select('id, title, scheduled_at').ilike('title', term).limit(4),
             supabase.from('global_calendar_events').select('id, title, start_time').ilike('title', term).limit(4),
-            supabase.from('students').select('id, full_name, class_id').ilike('full_name', term).limit(4),
+            supabase.from('students').select('id, full_name').ilike('full_name', term).limit(4),
             supabase.from('mural_posts').select('id, title, category').ilike('title', term).limit(4),
         ]);
 

@@ -1,3 +1,5 @@
+'use server';
+
 import { createClient } from '@/lib/supabase/server';
 import { Meeting } from '@/types/meeting';
 
